@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Does My Team Suck? | NFL, NBA, MLB, NHL Championship Performance Analysis</title>
+    <meta name="description" content="Find out if your favorite sports team underperforms or overperforms based on expected championships. Analyze NFL, NBA, MLB, and NHL teams' historical performance.">
+    <meta name="keywords" content="NFL championships, NBA championships, MLB championships, NHL championships, sports analysis, team performance, championship expectations">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://doesmyteamsuck.com/">
+    <meta property="og:title" content="Does My Team Suck? | Sports Championship Analysis">
+    <meta property="og:description" content="Discover if your favorite sports team performs above or below expectations based on historical championship data.">
+    <meta property="og:image" content="[Your OG Image URL]">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://doesmyteamsuck.com/">
+    <meta property="twitter:title" content="Does My Team Suck? | Sports Championship Analysis">
+    <meta property="twitter:description" content="Discover if your favorite sports team performs above or below expectations based on historical championship data.">
+    <meta property="twitter:image" content="[Your Twitter Card Image URL]">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Existing style imports -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Existing styles -->
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.75rem;
+            text-transform: none;
+            white-space: normal;
+        }
+
+        /* Adjust position when tooltip would be cut off */
+        @media (max-width: 768px) {
+            .tooltip .tooltip-text {
+                left: auto;
+                right: 0;
+                transform: translateX(0);
+            }
+            
+            .tooltip .tooltip-text::after {
+                left: auto;
+                right: 10px;
+            }
+        }
+
+        /* Ensure tooltip stays within table container */
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            /* Ensure tooltip stays within viewport */
+            left: auto;
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: auto;
+            right: 10px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        /* Tab Styles */
+        .tab-button {
+            @apply px-6 py-3 text-gray-600 hover:text-gray-800 border-b-2 border-transparent transition-colors duration-200;
+        }
+
+        .tab-button.active {
+            @apply text-blue-600 border-blue-600 font-medium;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-7xl font-bold text-gray-800 mb-4">
+                Does My Team Suck?
+            </h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Find out how your team performs compared to expectations. 
+                <span class="block text-sm mt-2 text-gray-500">Based on championships above/below expected</span>
+            </p>
+        </header>
+
+        <!-- SEO Content -->
+        <div class="max-w-3xl mx-auto mb-12 text-gray-600 text-center">
+            <p class="mb-4">
+                Ever wondered if your favorite team is really as good (or bad) as you think? We analyze championship performance 
+                across major sports leagues and compare actual championships won against expected championships 
+                based on team history and league size.
+            </p>
+            <p class="text-sm">
+                Our analysis takes into account factors like how long each team has been in the league and how many teams they 
+                competed against each year. A team's expected championships are calculated using a 1/N chance each season, 
+                where N is the number of teams in the league that year.
+            </p>
+        </div>
+
+        <!-- League Tabs -->
+        <div class="mb-8">
+            <div class="flex justify-center space-x-2 md:space-x-4 border-b border-gray-200">
+                <button class="tab-button active" data-league="NFL">NFL</button>
+                <button class="tab-button" data-league="NBA">NBA</button>
+                <button class="tab-button" data-league="MLB">MLB</button>
+                <button class="tab-button" data-league="NHL">NHL</button>
+            </div>
+        </div>
+
+        <!-- Search/Filter -->
+        <div class="mb-8 flex justify-center">
+            <div class="relative w-full md:w-1/2">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" 
+                       id="teamSearch" 
+                       placeholder="Search for your team..." 
+                       class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200">
+            </div>
+        </div>
+
+        <!-- Table for desktop -->
+        <div class="hidden md:block overflow-visible bg-white rounded-xl shadow-lg border border-gray-100">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="cursor-pointer px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition duration-200">
+                            Team Name <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="cursor-pointer px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition duration-200">
+                            Championships <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="cursor-pointer px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition duration-200">
+                            Expected 
+                            <span class="tooltip">
+                                <i class="fas fa-info-circle ml-1 text-gray-400"></i>
+                                <span class="tooltip-text">Expected championships based on team's time in league and number of competing teams each year (1/N teams chance)</span>
+                            </span>
+                            <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="cursor-pointer px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition duration-200">
+                            Difference <i class="fas fa-sort ml-1"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    <!-- Content will be generated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cards for mobile -->
+        <div class="md:hidden space-y-4">
+            <!-- Content will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const nfl_data = [
+    {"Team": "Pittsburgh Steelers", "Championships": 6, "Expected": 1.98553793, "Difference": 4.01446207},
+    {"Team": "New England Patriots", "Championships": 6, "Expected": 1.98553793, "Difference": 4.01446207},
+    {"Team": "Dallas Cowboys", "Championships": 5, "Expected": 1.98553793, "Difference": 3.01446207},
+    {"Team": "San Francisco 49ers", "Championships": 5, "Expected": 1.98553793, "Difference": 3.01446207},
+    {"Team": "New York Giants", "Championships": 4, "Expected": 1.98553793, "Difference": 2.01446207},
+    {"Team": "Green Bay Packers", "Championships": 4, "Expected": 1.98553793, "Difference": 2.01446207},
+    {"Team": "Kansas City Chiefs", "Championships": 4, "Expected": 1.98553793, "Difference": 2.01446207},
+    {"Team": "Baltimore Ravens", "Championships": 2, "Expected": 0.8842741935, "Difference": 1.115725806},
+    {"Team": "Washington Commanders", "Championships": 3, "Expected": 1.98553793, "Difference": 1.01446207},
+    {"Team": "Denver Broncos", "Championships": 3, "Expected": 1.98553793, "Difference": 1.01446207},
+    {"Team": "Las Vegas Raiders", "Championships": 3, "Expected": 1.98553793, "Difference": 1.01446207},
+    {"Team": "Tampa Bay Buccaneers", "Championships": 2, "Expected": 1.596178955, "Difference": 0.4038210445},
+    {"Team": "Indianapolis Colts", "Championships": 2, "Expected": 1.98553793, "Difference": 0.01446207019},
+    {"Team": "Los Angeles Rams", "Championships": 2, "Expected": 1.98553793, "Difference": 0.01446207019},
+    {"Team": "Miami Dolphins", "Championships": 2, "Expected": 1.98553793, "Difference": 0.01446207019},
+    {"Team": "Seattle Seahawks", "Championships": 1, "Expected": 1.596178955, "Difference": -0.5961789555},
+    {"Team": "Houston Texans", "Championships": 0, "Expected": 0.6875, "Difference": -0.6875},
+    {"Team": "Jacksonville Jaguars", "Championships": 0, "Expected": 0.9176075269, "Difference": -0.9176075269},
+    {"Team": "Carolina Panthers", "Championships": 0, "Expected": 0.9176075269, "Difference": -0.9176075269},
+    {"Team": "New Orleans Saints", "Championships": 1, "Expected": 1.943871263, "Difference": -0.9438712631},
+    {"Team": "Philadelphia Eagles", "Championships": 1, "Expected": 1.98553793, "Difference": -0.9855379298},
+    {"Team": "Chicago Bears", "Championships": 1, "Expected": 1.98553793, "Difference": -0.9855379298},
+    {"Team": "New York Jets", "Championships": 1, "Expected": 1.98553793, "Difference": -0.9855379298},
+    {"Team": "Cleveland Browns", "Championships": 0, "Expected": 1.88553793, "Difference": -1.88553793},
+    {"Team": "Cincinnati Bengals", "Championships": 0, "Expected": 1.903871263, "Difference": -1.903871263},
+    {"Team": "Arizona Cardinals", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Atlanta Falcons", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Detroit Lions", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Minnesota Vikings", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Buffalo Bills", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Tennessee Titans", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793},
+    {"Team": "Los Angeles Chargers", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793}
+]
+
+
+    </script>
+
+    <script>
+        // Calculate and add difference to each team
+        nfl_data.forEach(team => {
+            team.Difference = team.Championships - team.Expected;
+        });
+
+        // League data objects
+        const leagueData = {
+            NFL: nfl_data,
+            NBA: [], // Add NBA data when available
+            MLB: [], // Add MLB data when available
+            NHL: []  // Add NHL data when available
+        };
+
+        let currentLeague = 'NFL';
+
+        // Function to generate table and card content
+        function generateContent(data = leagueData[currentLeague]) {
+            // Generate table rows
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            // Generate mobile cards
+            const cardContainer = document.querySelector('.md\\:hidden');
+            cardContainer.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                const message = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Data coming soon for ${currentLeague}</td></tr>`;
+                tbody.insertAdjacentHTML('beforeend', message);
+                cardContainer.insertAdjacentHTML('beforeend', 
+                    `<div class="bg-white rounded-xl p-4 text-center text-gray-500">Data coming soon for ${currentLeague}</div>`
+                );
+                return;
+            }
+            
+            data.forEach(team => {
+                // Table row
+                const row = `
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${team.Team}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-700">${team.Championships}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-700">${team.Expected.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${team.Difference >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${team.Difference >= 0 ? '+' : ''}${team.Difference.toFixed(2)}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+                
+                // Mobile card
+                const card = `
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-4 hover:bg-gray-50 transition duration-150">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-medium text-gray-900">${team.Team}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${team.Difference >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${team.Difference >= 0 ? '+' : ''}${team.Difference.toFixed(2)}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-500">Championships</p>
+                                <p class="font-medium text-gray-700">${team.Championships}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Expected</p>
+                                <p class="font-medium text-gray-700">${team.Expected.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cardContainer.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.tab-button').forEach(btn => 
+                    btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Update current league and regenerate content
+                currentLeague = button.dataset.league;
+                generateContent(leagueData[currentLeague]);
+            });
+        });
+
+        // Initial content generation
+        generateContent();
+
+        // Update search functionality to work with both table and cards
+        document.getElementById('teamSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            // For desktop table
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                const teamName = row.querySelector('td').textContent.toLowerCase();
+                row.style.display = teamName.includes(searchTerm) ? '' : 'none';
+            });
+            
+            // For mobile cards
+            const cards = document.querySelectorAll('.md\\:hidden > div');
+            cards.forEach(card => {
+                const teamName = card.querySelector('h3').textContent.toLowerCase();
+                card.style.display = teamName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Table sorting functionality
+        document.querySelectorAll('th').forEach((header, index) => {
+            header.addEventListener('click', () => {
+                const isAsc = header.classList.contains('sorted-asc');
+                
+                // Clear all sort classes
+                document.querySelectorAll('th').forEach(th => {
+                    th.classList.remove('sorted-asc', 'sorted-desc');
+                });
+                
+                // Sort the data
+                const currentData = leagueData[currentLeague];
+                currentData.sort((a, b) => {
+                    switch(index) {
+                        case 0: // Team name
+                            return isAsc ? b.Team.localeCompare(a.Team) : a.Team.localeCompare(b.Team);
+                        case 1: // Championships
+                            return isAsc ? b.Championships - a.Championships : a.Championships - b.Championships;
+                        case 2: // Expected
+                            return isAsc ? b.Expected - a.Expected : a.Expected - b.Expected;
+                        case 3: // Difference
+                            return isAsc ? b.Difference - a.Difference : a.Difference - b.Difference;
+                    }
+                });
+                
+                // Update sort direction indicator
+                header.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+                
+                // Regenerate content with sorted data
+                generateContent(currentData);
+            });
+        });
+    </script>
+</body>
+</html>
