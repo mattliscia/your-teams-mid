@@ -224,6 +224,55 @@
     {"Team": "Los Angeles Chargers", "Championships": 0, "Expected": 1.98553793, "Difference": -1.98553793}
 ]
 
+    const nba_data = [
+    {"Team": "Boston Celtics", "Expected": 4.618226513, "Championships": 18, "Difference": 13.38177349},
+    {"Team": "New York Knicks", "Expected": 4.618226513, "Championships": 2, "Difference": -2.618226513},
+    {"Team": "Golden State Warriors", "Expected": 4.618226513, "Championships": 7, "Difference": 2.381773487},
+    {"Team": "Providence Steamrollers", "Expected": 0.2992424242, "Championships": 0, "Difference": -0.2992424242},
+    {"Team": "Toronto Huskies", "Expected": 0.09090909091, "Championships": 0, "Difference": -0.09090909091},
+    {"Team": "Washington Capitols", "Expected": 0.4489750446, "Championships": 0, "Difference": -0.4489750446},
+    {"Team": "Chicago Stags", "Expected": 0.3580659537, "Championships": 0, "Difference": -0.3580659537},
+    {"Team": "Cleveland Rebels", "Expected": 0.09090909091, "Championships": 0, "Difference": -0.09090909091},
+    {"Team": "Detroit Falcons", "Expected": 0.09090909091, "Championships": 0, "Difference": -0.09090909091},
+    {"Team": "Pittsburgh Ironmen", "Expected": 0.09090909091, "Championships": 0, "Difference": -0.09090909091},
+    {"Team": "St. Louis Bombers", "Expected": 0.3580659537, "Championships": 0, "Difference": -0.3580659537},
+    {"Team": "Baltimore Bullets (Original)", "Expected": 0.7802881759, "Championships": 1, "Difference": 0.2197118241},
+    {"Team": "Detroit Pistons", "Expected": 4.402317422, "Championships": 3, "Difference": -1.402317422},
+    {"Team": "Indianapolis Jets", "Expected": 0.08333333333, "Championships": 0, "Difference": -0.08333333333},
+    {"Team": "Los Angeles Lakers", "Expected": 4.402317422, "Championships": 17, "Difference": 12.59768258},
+    {"Team": "Sacramento Kings", "Expected": 4.402317422, "Championships": 1, "Difference": -3.402317422},
+    {"Team": "Philadelphia 76ers", "Expected": 4.318984088, "Championships": 3, "Difference": -1.318984088},
+    {"Team": "Anderson Packers", "Expected": 0.05882352941, "Championships": 0, "Difference": -0.05882352941},
+    {"Team": "Denver Nuggets (Original)", "Expected": 0.05882352941, "Championships": 0, "Difference": -0.05882352941},
+    {"Team": "Indianapolis Olympians", "Expected": 0.3497326203, "Championships": 0, "Difference": -0.3497326203},
+    {"Team": "Sheboygan Red Skins", "Expected": 0.05882352941, "Championships": 0, "Difference": -0.05882352941},
+    {"Team": "Atlanta Hawks", "Expected": 4.318984088, "Championships": 1, "Difference": -3.318984088},
+    {"Team": "Washington Bullets", "Expected": 3.055852775, "Championships": 0, "Difference": -3.055852775},
+    {"Team": "Chicago Bulls", "Expected": 2.44147369, "Championships": 6, "Difference": 3.55852631},
+    {"Team": "Houston Rockets", "Expected": 2.34147369, "Championships": 2, "Difference": -0.3414736902},
+    {"Team": "Oklahoma City Thunder", "Expected": 2.34147369, "Championships": 1, "Difference": -1.34147369},
+    {"Team": "Milwaukee Bucks", "Expected": 2.258140357, "Championships": 2, "Difference": -0.2581403569},
+    {"Team": "Phoenix Suns", "Expected": 2.258140357, "Championships": 0, "Difference": -2.258140357},
+    {"Team": "Cleveland Cavaliers", "Expected": 2.115283214, "Championships": 1, "Difference": -1.115283214},
+    {"Team": "Portland Trail Blazers", "Expected": 2.115283214, "Championships": 1, "Difference": -1.115283214},
+    {"Team": "Los Angeles Clippers", "Expected": 2.115283214, "Championships": 0, "Difference": -2.115283214},
+    {"Team": "Utah Jazz", "Expected": 1.879989096, "Championships": 0, "Difference": -1.879989096},
+    {"Team": "San Antonio Spurs", "Expected": 1.768877985, "Championships": 5, "Difference": 3.231122015},
+    {"Team": "Indiana Pacers", "Expected": 1.768877985, "Championships": 0, "Difference": -1.768877985},
+    {"Team": "Denver Nuggets", "Expected": 1.768877985, "Championships": 1, "Difference": -0.7688779852},
+    {"Team": "New Jersey Nets", "Expected": 1.768877985, "Championships": 0, "Difference": -1.768877985},
+    {"Team": "Dallas Mavericks", "Expected": 1.587059803, "Championships": 1, "Difference": -0.5870598034},
+    {"Team": "Charlotte Hornets", "Expected": 1.170268199, "Championships": 0, "Difference": -1.170268199},
+    {"Team": "Miami Heat", "Expected": 1.239233716, "Championships": 3, "Difference": 1.760766284},
+    {"Team": "Minnesota Timberwolves", "Expected": 1.199233716, "Championships": 0, "Difference": -1.199233716},
+    {"Team": "Orlando Magic", "Expected": 1.199233716, "Championships": 0, "Difference": -1.199233716},
+    {"Team": "Toronto Raptors", "Expected": 0.9770114943, "Championships": 1, "Difference": 0.02298850575},
+    {"Team": "Memphis Grizzlies", "Expected": 0.9770114943, "Championships": 0, "Difference": -0.9770114943},
+    {"Team": "New Orleans Pelicans", "Expected": 0.7356321839, "Championships": 0, "Difference": -0.7356321839}
+]
+
+
+
 
     </script>
 
@@ -236,7 +285,7 @@
         // League data objects
         const leagueData = {
             NFL: nfl_data,
-            NBA: [], // Add NBA data when available
+            NBA: nba_data, // Add NBA data when available
             MLB: [], // Add MLB data when available
             NHL: []  // Add NHL data when available
         };
@@ -245,6 +294,11 @@
 
         // Function to generate table and card content
         function generateContent(data = leagueData[currentLeague]) {
+            // Sort data by Difference in descending order by default
+            if (data && data.length > 0) {
+                data.sort((a, b) => b.Difference - a.Difference);
+            }
+
             // Generate table rows
             const tbody = document.querySelector('tbody');
             tbody.innerHTML = '';
