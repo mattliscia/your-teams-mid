@@ -441,6 +441,21 @@
         </div>
     </div>
 
+    <!-- Add this new modal template right before the closing </body> tag -->
+    <div id="teamModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-2xl mx-4">
+            <div class="flex justify-between items-start mb-6">
+                <h2 id="teamModalTitle" class="text-2xl font-bold text-gray-900"></h2>
+                <button class="text-gray-500 hover:text-gray-700 modal-close">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="teamModalContent" class="prose">
+                <!-- Team data will be inserted here -->
+            </div>
+        </div>
+    </div>
+
     <script src="happyhopperad.js"></script>
 
     <script>
@@ -562,7 +577,7 @@
     {"Team": "Seattle Kraken", "Championships": 0, "Expected": 0.09375, "Difference": -0.09375},
     {"Team": "Philadelphia Flyers", "Championships": 2, "Expected": 2.427018762, "Difference": -0.4270187623},
     {"Team": "Los Angeles Kings", "Championships": 2, "Expected": 2.427018762, "Difference": -0.4270187623},
-    {"Team": "Colombus Blue Jackets", "Championships": 0, "Expected": 0.7561155914, "Difference": -0.7561155914},
+    {"Team": "Columbus Blue Jackets", "Championships": 0, "Expected": 0.7561155914, "Difference": -0.7561155914},
     {"Team": "Minnesota Wild", "Championships": 0, "Expected": 0.7561155914, "Difference": -0.7561155914},
     {"Team": "Winnipeg Jets", "Championships": 0, "Expected": 0.7918298771, "Difference": -0.7918298771},
     {"Team": "Nashville Predators", "Championships": 0, "Expected": 0.8288669141, "Difference": -0.8288669141},
@@ -674,7 +689,14 @@
                 // Table row
                 const row = `
                     <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${team.Team}</td>
+                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            <div class="flex items-center">
+                                <img src="${getTeamLogo(team.Team, league)}" 
+                                     alt="${team.Team} logo" 
+                                     class="w-8 h-8 mr-3 object-contain">
+                                ${team.Team}
+                            </div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-gray-700">${team.Championships}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-gray-700">${team.Expected.toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -690,7 +712,12 @@
                 const card = `
                     <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-4 hover:bg-gray-50 transition duration-150">
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-medium text-gray-900">${team.Team}</h3>
+                            <div class="flex items-center">
+                                <img src="${getTeamLogo(team.Team, league)}" 
+                                     alt="${team.Team} logo" 
+                                     class="w-8 h-8 mr-3 object-contain">
+                                <h3 class="font-medium text-gray-900">${team.Team}</h3>
+                            </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${team.Difference >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
                                 ${team.Difference >= 0 ? '+' : ''}${team.Difference.toFixed(2)}
                             </span>
@@ -861,6 +888,318 @@
             
             content.classList.toggle('hidden');
             icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+        }
+
+        // Add these new functions
+        function showTeamModal(teamData) {
+            const modal = document.getElementById('teamModal');
+            const title = document.getElementById('teamModalTitle');
+            const content = document.getElementById('teamModalContent');
+            
+            // Determine which league the team is from
+            let league = '';
+            for (const [key, teams] of Object.entries(leagueData)) {
+                if (teams.find(t => t.Team === teamData.Team)) {
+                    league = key;
+                    break;
+                }
+            }
+            
+            // Add logo to title
+            title.innerHTML = `
+                <div class="flex items-center">
+                    <img src="${getTeamLogo(teamData.Team, league)}" 
+                         alt="${teamData.Team} logo" 
+                         class="w-10 h-10 mr-3 object-contain">
+                    <span>${teamData.Team}</span>
+                </div>
+            `;
+            
+            content.innerHTML = `
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Championships</h3>
+                        <p class="text-3xl font-bold">${teamData.Championships}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Expected</h3>
+                        <p class="text-3xl font-bold">${teamData.Expected.toFixed(2)}</p>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Performance</h3>
+                        <p class="text-3xl font-bold ${teamData.Difference >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${teamData.Difference >= 0 ? '+' : ''}${teamData.Difference.toFixed(2)}
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Your Team</h3>
+                        <p class="text-3xl font-bold ${
+                            teamData.Difference > 5 ? 'text-purple-600' : 
+                            teamData.Difference > 1 ? 'text-green-600' :
+                            teamData.Difference > -1 ? 'text-yellow-600' :
+                            teamData.Difference > -2 ? 'text-orange-600' :
+                            'text-red-600'
+                        }">
+                            ${
+                                teamData.Difference > 5 ? "Really Doesn't Suck" :
+                                teamData.Difference > 1 ? "Doesn't Suck" :
+                                teamData.Difference > -1 ? 'Mid' :
+                                teamData.Difference > -2 ? 'Kinda Sucks' :
+                                teamData.Difference > -4 ? 'Really Sucks' :
+                                'Sucks More Than Potvin'
+                            }
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function findTeamByUrlHash() {
+            const hash = decodeURIComponent(window.location.hash.slice(1)).toLowerCase();
+            if (!hash) return;
+            
+            // Search through all league data
+            for (const league in leagueData) {
+                const team = leagueData[league].find(t => 
+                    t.Team.toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '') === hash
+                );
+                if (team) {
+                    showTeamModal(team);
+                    break;
+                }
+            }
+        }
+
+        // Add click handlers to team names to update URL and show modal
+        function addTeamClickHandlers() {
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const teamName = row.querySelector('td').textContent.trim();
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', () => {
+                    const urlHash = teamName.toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-') // Replace any non-alphanumeric sequences with a single dash
+                        .replace(/^-+|-+$/g, '');    // Remove dashes from start and end
+                    window.location.hash = urlHash;
+                    const team = Object.values(leagueData)
+                        .flat()
+                        .find(t => t.Team === teamName);
+                    if (team) showTeamModal(team);
+                });
+            });
+            
+            // Update mobile card handlers too
+            document.querySelectorAll('.cards-container > div').forEach(card => {
+                const teamName = card.querySelector('h3').textContent.trim();
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    const urlHash = teamName.toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                    window.location.hash = urlHash;
+                    const team = Object.values(leagueData)
+                        .flat()
+                        .find(t => t.Team === teamName);
+                    if (team) showTeamModal(team);
+                });
+            });
+        }
+
+        // Call this after generating content
+        document.addEventListener('DOMContentLoaded', () => {
+            addTeamClickHandlers();
+            findTeamByUrlHash();
+        });
+
+        // Handle hash changes
+        window.addEventListener('hashchange', findTeamByUrlHash);
+
+        // Modify the generateContent function to re-add click handlers
+        const originalGenerateContent = generateContent;
+        generateContent = function(...args) {
+            originalGenerateContent.apply(this, args);
+            addTeamClickHandlers();
+        };
+
+        function getTeamLogo(teamName, league) {
+            // Default to a placeholder if no match is found
+            let logoUrl = 'https://via.placeholder.com/50';
+            
+            switch(league) {
+                case 'NFL':
+                    // NFL logos can be accessed through NFL's CDN
+                    const nflTeamAbbr = {
+                        'Pittsburgh Steelers': 'PIT',
+                        'New England Patriots': 'NE',
+                        'Dallas Cowboys': 'DAL',
+                        'San Francisco 49ers': 'SF',
+                        'New York Giants': 'NYG',
+                        'Green Bay Packers': 'GB',
+                        'Kansas City Chiefs': 'KC',
+                        'Baltimore Ravens': 'BAL',
+                        'Washington Commanders': 'WAS',
+                        'Denver Broncos': 'DEN',
+                        'Las Vegas Raiders': 'LV',
+                        'Tampa Bay Buccaneers': 'TB',
+                        'Indianapolis Colts': 'IND',
+                        'Los Angeles Rams': 'LA',
+                        'Miami Dolphins': 'MIA',
+                        'Seattle Seahawks': 'SEA',
+                        'Houston Texans': 'HOU',
+                        'Jacksonville Jaguars': 'JAX',
+                        'Carolina Panthers': 'CAR',
+                        'New Orleans Saints': 'NO',
+                        'Philadelphia Eagles': 'PHI',
+                        'Chicago Bears': 'CHI',
+                        'New York Jets': 'NYJ',
+                        'Cleveland Browns': 'CLE',
+                        'Cincinnati Bengals': 'CIN',
+                        'Arizona Cardinals': 'ARI',
+                        'Atlanta Falcons': 'ATL',
+                        'Detroit Lions': 'DET',
+                        'Minnesota Vikings': 'MIN',
+                        'Buffalo Bills': 'BUF',
+                        'Tennessee Titans': 'TEN',
+                        'Los Angeles Chargers': 'LAC'
+                    };
+                    
+                    const nflAbbr = nflTeamAbbr[teamName];
+                    if (nflAbbr) {
+                        logoUrl = `https://static.www.nfl.com/t_q-best/league/api/clubs/logos/${nflAbbr}`;
+                    }
+                    break;
+                    
+                case 'NBA':
+                    const nbaTeamAbbr = {
+                        'Boston Celtics': 'BOS',
+                        'New York Knicks': 'NYK',
+                        'Golden State Warriors': 'GSW',
+                        'Detroit Pistons': 'DET',
+                        'Los Angeles Lakers': 'LAL',
+                        'Sacramento Kings': 'SAC',
+                        'Philadelphia 76ers': 'PHI',
+                        'Atlanta Hawks': 'ATL',
+                        'Washington Wizards': 'WAS',
+                        'Chicago Bulls': 'CHI',
+                        'Houston Rockets': 'HOU',
+                        'Oklahoma City Thunder': 'OKC',
+                        'Milwaukee Bucks': 'MIL',
+                        'Phoenix Suns': 'PHX',
+                        'Cleveland Cavaliers': 'CLE',
+                        'Portland Trail Blazers': 'POR',
+                        'Los Angeles Clippers': 'LAC',
+                        'Utah Jazz': 'UTAH',
+                        'San Antonio Spurs': 'SAS',
+                        'Indiana Pacers': 'IND',
+                        'Denver Nuggets': 'DEN',
+                        'Brooklyn Nets': 'BKN',
+                        'Dallas Mavericks': 'DAL',
+                        'Charlotte Hornets': 'CHA',
+                        'Miami Heat': 'MIA',
+                        'Minnesota Timberwolves': 'MIN',
+                        'Orlando Magic': 'ORL',
+                        'Toronto Raptors': 'TOR',
+                        'Memphis Grizzlies': 'MEM',
+                        'New Orleans Pelicans': 'NO'
+                    };
+                    
+                    const nbaAbbr = nbaTeamAbbr[teamName];
+                    if (nbaAbbr) {
+                        logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${nbaAbbr.toLowerCase()}.png`;
+                    }
+                    break;
+                    
+                case 'MLB':
+                    const mlbTeamAbbr = {
+                        'New York Yankees': '147',
+                        'St. Louis Cardinals': '138',
+                        'Boston Red Sox': '111',
+                        'Athletics': '133',
+                        'Los Angeles Dodgers': '119',
+                        'San Francisco Giants': '137',
+                        'Cincinnati Reds': '113',
+                        'Pittsburgh Pirates': '134',
+                        'Detroit Tigers': '116',
+                        'Atlanta Braves': '144',
+                        'Chicago Cubs': '112',
+                        'Baltimore Orioles': '110',
+                        'Minnesota Twins': '142',
+                        'Chicago White Sox': '145',
+                        'Philadelphia Phillies': '143',
+                        'Cleveland Guardians': '114',
+                        'New York Mets': '121',
+                        'Houston Astros': '117',
+                        'Kansas City Royals': '118',
+                        'Toronto Blue Jays': '141',
+                        'Miami Marlins': '146',
+                        'Texas Rangers': '140',
+                        'Los Angeles Angels': '108',
+                        'Washington Nationals': '120',
+                        'Arizona Diamondbacks': '109',
+                        'San Diego Padres': '135',
+                        'Milwaukee Brewers': '158',
+                        'Seattle Mariners': '136',
+                        'Colorado Rockies': '115',
+                        'Tampa Bay Rays': '139'
+                    };
+                    
+                    const mlbId = mlbTeamAbbr[teamName];
+                    if (mlbId) {
+                        logoUrl = `https://www.mlbstatic.com/team-logos/${mlbId}.svg`;
+                    }
+                    break;
+                    
+                case 'NHL':
+                    const nhlTeamAbbr = {
+                        'Montreal Canadiens': 'MTL',
+                        'Edmonton Oilers': 'EDM',
+                        'Pittsburgh Penguins': 'PIT',
+                        'Toronto Maple Leafs': 'TOR',
+                        'Detroit Red Wings': 'DET',
+                        'New York Islanders': 'NYI',
+                        'Tampa Bay Lightning': 'TBL',
+                        'New Jersey Devils': 'NJD',
+                        'Colorado Avalanche': 'COL',
+                        'Vegas Golden Knights': 'VGK',
+                        'Anaheim Ducks': 'ANA',
+                        'Florida Panthers': 'FLA',
+                        'Seattle Kraken': 'SEA',
+                        'Philadelphia Flyers': 'PHI',
+                        'Los Angeles Kings': 'LAK',
+                        'Columbus Blue Jackets': 'CBJ',
+                        'Minnesota Wild': 'MIN',
+                        'Winnipeg Jets': 'WPG',
+                        'Nashville Predators': 'NSH',
+                        'Washington Capitals': 'WSH',
+                        'Carolina Hurricanes': 'CAR',
+                        'Calgary Flames': 'CGY',
+                        'Ottawa Senators': 'OTT',
+                        'San Jose Sharks': 'SJS',
+                        'Dallas Stars': 'DAL',
+                        'St. Louis Blues': 'STL',
+                        'Arizona Coyotes': 'ARI',
+                        'Buffalo Sabres': 'BUF',
+                        'Vancouver Canucks': 'VAN',
+                        'Boston Bruins': 'BOS',
+                        'Chicago Blackhawks': 'CHI',
+                        'New York Rangers': 'NYR'
+                    };
+                    
+                    const nhlAbbr = nhlTeamAbbr[teamName];
+                    if (nhlAbbr) {
+                        logoUrl = `https://assets.nhle.com/logos/nhl/svg/${nhlAbbr}_light.svg`;
+                    }
+                    break;
+            }
+            
+            return logoUrl;
         }
     </script>
 </body>
