@@ -940,6 +940,8 @@
                             teamData.Difference > 1 ? 'text-green-600' :
                             teamData.Difference > -1 ? 'text-yellow-600' :
                             teamData.Difference > -2 ? 'text-orange-600' :
+                            teamData.Difference > -3 ? 'text-red-600' :
+                            teamData.Difference > -4 ? 'text-red-600' :
                             'text-red-600'
                         }">
                             ${
@@ -947,6 +949,7 @@
                                 teamData.Difference > 1 ? "Doesn't Suck" :
                                 teamData.Difference > -1 ? 'Is Mid' :
                                 teamData.Difference > -2 ? 'Kinda Sucks' :
+                                teamData.Difference > -3 ? 'Sucks' :
                                 teamData.Difference > -4 ? 'Really Sucks' :
                                 'Sucks More Than Potvin'
                             }
