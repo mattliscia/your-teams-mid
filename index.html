@@ -96,11 +96,36 @@
 
         /* Tab Styles */
         .tab-button {
-            @apply px-6 py-3 text-gray-600 hover:text-gray-800 border-b-2 border-transparent transition-colors duration-200;
+            padding: 0.75rem 0.5rem;  /* Reduced padding for mobile */
+            color: #4B5563;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            .tab-button {
+                padding: 0.75rem 1.5rem;  /* Larger padding on desktop */
+            }
+        }
+
+        .tab-button:hover {
+            color: #1F2937;
         }
 
         .tab-button.active {
-            @apply text-blue-600 border-blue-600 font-medium;
+            color: #2563EB;
+            border-bottom: 2px solid #059669;
+            font-weight: 500;
+        }
+
+        .tab-button span {
+            font-size: 1rem;  /* Smaller text on mobile */
+        }
+
+        @media (min-width: 768px) {
+            .tab-button span {
+                font-size: 1.5rem;  /* Larger text on desktop */
+            }
         }
     </style>
 </head>
@@ -119,6 +144,9 @@
 
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-12">
+
+        <div id="top-ad-placeholder" class="mb-8"></div>
+
         <!-- How it Works Button -->
         <div class="flex justify-center mb-8">
             <button onclick="toggleHowItWorks()" class="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors">
@@ -126,6 +154,8 @@
                 <i id="howItWorksIcon" class="fas fa-chevron-down transition-transform duration-200"></i>
             </button>
         </div>
+
+        
 
         <!-- How it Works Content (Hidden by default) -->
         <div id="howItWorksContent" class="max-w-3xl mx-auto mb-12 text-gray-600 text-center hidden">
@@ -143,21 +173,21 @@
 
         <!-- League Tabs -->
         <div class="mb-8">
-            <div class="flex justify-center space-x-4 md:space-x-8 border-b border-gray-200">
+            <div class="flex justify-center space-x-2 md:space-x-8 border-b border-gray-200">
                 <button class="tab-button active" data-league="ALL">
-                    <span class="text-2xl">ALL</span>
+                    <span>ALL</span>
                 </button>
                 <button class="tab-button" data-league="NFL">
-                    <span class="text-2xl">NFL</span>
+                    <span>NFL</span>
                 </button>
                 <button class="tab-button" data-league="NBA">
-                    <span class="text-2xl">NBA</span>
+                    <span>NBA</span>
                 </button>
                 <button class="tab-button" data-league="MLB">
-                    <span class="text-2xl">MLB</span>
+                    <span>MLB</span>
                 </button>
                 <button class="tab-button" data-league="NHL">
-                    <span class="text-2xl">NHL</span>
+                    <span>NHL</span>
                 </button>
             </div>
         </div>
@@ -320,8 +350,15 @@
         </div>
     </main>
 
+    <!-- Data Source Info -->
+    <div class="text-center text-sm text-gray-500 py-4">
+        Data sourced from official league records. Last updated: January 2025
+    </div>
+
+    <div id="bottom-ad-placeholder" class="mb-8"></div>
+
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12">
+    <footer class="bg-white border-t border-gray-200">
         <div class="container mx-auto px-4 py-8">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div class="text-gray-600 text-sm">
@@ -329,19 +366,11 @@
                     <button class="text-blue-600 hover:text-blue-800 transition-colors" onclick="showModal('privacyModal')">Privacy Policy</button> | 
                     <button class="text-blue-600 hover:text-blue-800 transition-colors" onclick="showModal('termsModal')">Terms of Use</button>
                 </div>
-                <div class="text-sm text-gray-500">
-                    Data sourced from official league records. Last updated: January 2025
-                </div>
                 <div class="flex space-x-6">
                     <a href="https://twitter.com/yourteamsmid" target="_blank" rel="noopener noreferrer" 
                        class="text-gray-600 hover:text-blue-500 transition-colors">
                         <i class="fab fa-twitter text-xl"></i>
                         <span class="sr-only">Twitter</span>
-                    </a>
-                    <a href="https://github.com/yourteamsmid" target="_blank" rel="noopener noreferrer"
-                       class="text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="fab fa-github text-xl"></i>
-                        <span class="sr-only">GitHub</span>
                     </a>
                     <a href="mailto:contact@yourteamsmid.com"
                        class="text-gray-600 hover:text-red-500 transition-colors">
@@ -411,6 +440,8 @@
             </div>
         </div>
     </div>
+
+    <script src="happyhopperad.js"></script>
 
     <script>
         const nfl_data = [
