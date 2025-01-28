@@ -750,36 +750,66 @@
         });
 
         // Table sorting functionality
-        document.querySelectorAll('th').forEach((header, index) => {
-            header.addEventListener('click', () => {
-                const isAsc = header.classList.contains('sorted-asc');
+        document.querySelectorAll('th').forEach(headerCell => {
+            headerCell.addEventListener('click', () => {
+                const tableBody = headerCell.closest('table').querySelector('tbody');
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                const columnIndex = Array.from(headerCell.parentElement.children).indexOf(headerCell);
+                const isNumeric = columnIndex > 0; // First column is team name, rest are numbers
                 
-                // Clear all sort classes
-                document.querySelectorAll('th').forEach(th => {
-                    th.classList.remove('sorted-asc', 'sorted-desc');
+                // Get current sort direction
+                const currentDirection = headerCell.getAttribute('data-sort') || 'none';
+                
+                // Update sort direction
+                const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+                
+                // Reset all headers
+                headerCell.closest('tr').querySelectorAll('th').forEach(th => {
+                    th.setAttribute('data-sort', 'none');
                 });
                 
-                // Sort the data
-                const currentData = leagueData[currentLeague];
-                currentData.sort((a, b) => {
-                    switch(index) {
-                        case 0: // Team name
-                            return isAsc ? b.Team.localeCompare(a.Team) : a.Team.localeCompare(b.Team);
-                        case 1: // Championships
-                            return isAsc ? b.Championships - a.Championships : a.Championships - b.Championships;
-                        case 2: // Expected
-                            return isAsc ? b.Expected - a.Expected : a.Expected - b.Expected;
-                        case 3: // Difference
-                            return isAsc ? b.Difference - a.Difference : a.Difference - b.Difference;
+                // Set new sort direction
+                headerCell.setAttribute('data-sort', newDirection);
+                
+                // Sort rows
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.children[columnIndex].textContent.trim();
+                    const cellB = rowB.children[columnIndex].textContent.trim();
+                    
+                    if (isNumeric) {
+                        const numA = parseFloat(cellA);
+                        const numB = parseFloat(cellB);
+                        return newDirection === 'asc' ? numA - numB : numB - numA;
+                    } else {
+                        return newDirection === 'asc' 
+                            ? cellA.localeCompare(cellB) 
+                            : cellB.localeCompare(cellA);
                     }
                 });
                 
-                // Update sort direction indicator
-                header.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+                // Clear and re-append rows
+                rows.forEach(row => tableBody.appendChild(row));
                 
-                // Regenerate content with sorted data
-                generateContent(currentData);
+                // Update sort icons
+                headerCell.closest('tr').querySelectorAll('th i.fas.fa-sort').forEach(icon => {
+                    icon.className = 'fas fa-sort ml-1';
+                });
+                
+                const icon = headerCell.querySelector('i.fas.fa-sort');
+                if (icon) {
+                    icon.className = `fas fa-sort-${newDirection === 'asc' ? 'up' : 'down'} ml-1`;
+                }
             });
+        });
+
+        // Initialize tables with default sort (Difference column, descending)
+        document.querySelectorAll('table').forEach(table => {
+            const differenceHeader = Array.from(table.querySelectorAll('th'))
+                .find(th => th.textContent.trim().startsWith('Difference'));
+            if (differenceHeader) {
+                differenceHeader.click(); // Sort by difference descending
+                differenceHeader.click(); // Click again to make it descending
+            }
         });
 
         // Modal functionality
