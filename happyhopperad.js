@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
 
     const bottomAdHtml = `
-        <div class="max-w-4xl mx-auto mt-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
             <div class="text-xs text-gray-500 mb-1 text-right">Sponsored</div>
             <div class="p-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-center rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <div class="flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center md:justify-between">
