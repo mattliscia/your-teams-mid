@@ -16,22 +16,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>Does Your Team Suck? | NFL, NBA, MLB, NHL Championship Performance Analysis</title>
-    <meta name="description" content="Find out if your favorite sports team underperforms or overperforms based on expected championships. Analyze NFL, NBA, MLB, and NHL teams' historical performance.">
-    <meta name="keywords" content="NFL championships, NBA championships, MLB championships, NHL championships, sports analysis, team performance, championship expectations">
+    <title>Does Your Team Suck? | Best and Worst Sports Teams of All Time - NFL, NBA, MLB, NHL Stats</title>
+    <meta name="description" content="Prove why your team is better (or why your friend's team sucks) with data-driven rankings. See why the Yankees dominate, why the Bills struggle, and settle bar arguments about the best teams in NFL, NBA, MLB, and NHL history.">
+    <meta name="keywords" content="best teams of all time, why Yankees always win, worst NFL teams, NBA dynasty rankings, MLB championships, NHL historic teams, sports team rankings">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://yourteamsmid.com/">
-    <meta property="og:title" content="Does Your Team Suck? | Sports Championship Analysis">
-    <meta property="og:description" content="Discover if your favorite sports team performs above or below expectations based on historical championship data.">
+    <meta property="og:title" content="Does Your Team Suck? | Best and Worst Sports Teams Ever">
+    <meta property="og:description" content="Settle bar arguments with data: Find out if your team is actually good or just lucky. Compare NFL, NBA, MLB, and NHL teams based on real championship performance.">
     <meta property="og:image" content="[Your OG Image URL]">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://yourteamsmid.com/">
-    <meta property="twitter:title" content="Does Your Team Suck? | Sports Championship Analysis">
-    <meta property="twitter:description" content="Discover if your favorite sports team performs above or below expectations based on historical championship data.">
+    <meta property="twitter:title" content="Does Your Team Suck? | Best and Worst Sports Teams Ever">
+    <meta property="twitter:description" content="Settle bar arguments with data: Find out if your team is actually good or just lucky. Compare NFL, NBA, MLB, and NHL teams based on real championship performance.">
     <meta property="twitter:image" content="[Your Twitter Card Image URL]">
 
     <!-- Favicon -->
@@ -153,6 +153,144 @@
         </div>
     </header>
 
+    <!-- Best/Worst Teams Section -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Best Teams -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                    Best Sports Teams of All Time
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow" 
+                         onclick="showTeamModal(leagueData.MLB.find(t => t.Team === 'New York Yankees'))">
+                        <div class="flex items-center">
+                            <img src="https://www.mlbstatic.com/team-logos/147.svg" alt="Yankees logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">New York Yankees</p>
+                                <p class="text-sm text-gray-600">MLB</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600">+21.04</p>
+                            <p class="text-sm text-gray-600">Above Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NHL.find(t => t.Team === 'Montreal Canadiens'))">
+                        <div class="flex items-center">
+                            <img src="https://assets.nhle.com/logos/nhl/svg/MTL_light.svg" alt="Canadiens logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">Montreal Canadiens</p>
+                                <p class="text-sm text-gray-600">NHL</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600">+13.48</p>
+                            <p class="text-sm text-gray-600">Above Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NBA.find(t => t.Team === 'Boston Celtics'))">
+                        <div class="flex items-center">
+                            <img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="Celtics logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">Boston Celtics</p>
+                                <p class="text-sm text-gray-600">NBA</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600">+13.38</p>
+                            <p class="text-sm text-gray-600">Above Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NFL.find(t => t.Team === 'New England Patriots'))">
+                        <div class="flex items-center">
+                            <img src="https://static.www.nfl.com/t_q-best/league/api/clubs/logos/NE" alt="Patriots logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">New England Patriots <span class="text-xs text-gray-600">(tie)</span></p>
+                                <p class="text-sm text-gray-600">NFL</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600">+4.01</p>
+                            <p class="text-sm text-gray-600">Above Expected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Worst Teams -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-thumbs-down text-red-500 mr-2"></i>
+                    Worst Sports Teams of All Time
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NHL.find(t => t.Team === 'New York Rangers'))">
+                        <div class="flex items-center">
+                            <img src="https://assets.nhle.com/logos/nhl/svg/NYR_light.svg" alt="Rangers logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">New York Rangers</p>
+                                <p class="text-sm text-gray-600">NHL</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600">-4.52</p>
+                            <p class="text-sm text-gray-600">Below Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.MLB.find(t => t.Team === 'Cleveland Guardians'))">
+                        <div class="flex items-center">
+                            <img src="https://www.mlbstatic.com/team-logos/114.svg" alt="Guardians logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">Cleveland Guardians <span class="text-xs text-gray-600">(tie)</span></p>
+                                <p class="text-sm text-gray-600">MLB</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600">-3.96</p>
+                            <p class="text-sm text-gray-600">Below Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NBA.find(t => t.Team === 'Sacramento Kings'))">
+                        <div class="flex items-center">
+                            <img src="https://a.espncdn.com/i/teamlogos/nba/500/sac.png" alt="Kings logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">Sacramento Kings</p>
+                                <p class="text-sm text-gray-600">NBA</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600">-3.40</p>
+                            <p class="text-sm text-gray-600">Below Expected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-white rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                         onclick="showTeamModal(leagueData.NFL.find(t => t.Team === 'Buffalo Bills'))">
+                        <div class="flex items-center">
+                            <img src="https://static.www.nfl.com/t_q-best/league/api/clubs/logos/BUF" alt="Bills logo" class="w-8 h-8 mr-3">
+                            <div>
+                                <p class="font-semibold text-gray-900">Buffalo Bills <span class="text-xs text-gray-600">(7-way tie)</span></p>
+                                <p class="text-sm text-gray-600">NFL</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-red-600">-1.99</p>
+                            <p class="text-sm text-gray-600">Below Expected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-12">
 
@@ -171,15 +309,30 @@
         <!-- How it Works Content (Hidden by default) -->
         <div id="howItWorksContent" class="max-w-3xl mx-auto mb-12 text-gray-600 text-center hidden">
             <p class="mb-4">
-                Ever wondered if your favorite team is really as good (or bad) as you think? We analyze championship performance 
-                across major sports leagues and compare actual championships won against expected championships 
-                based on team history and league size.
+                Need to prove <strong>why your team is better</strong>? We've got the receipts. 
+                Our data shows which teams actually deserve their rings and which ones just got lucky.
+            </p>
+            <p class="mb-4">
+                Want to know <strong>why the Yankees always win</strong> or <strong>why the Bills never do</strong>? 
+                We compare championships won vs. expected championships based on math, not emotions. 
+                Perfect for settling bar arguments and roasting your friends' terrible teams.
             </p>
             <p class="text-sm">
-                Our analysis takes into account factors like how long each team has been in the league and how many teams they 
-                competed against each year. A team's expected championships are calculated using a 1/N chance each season, 
-                where N is the number of teams in the league that year.
+                <strong>Tired of hearing about your friend's "historic franchise"?</strong> 
+                Our numbers show which teams are actually great and which ones are living off ancient history. 
+                Sometimes the truth hurts - but that's what makes it fun.
             </p>
+            <div class="mt-6 border-t pt-6">
+                <p class="mb-4">
+                    <strong>How are the stats calculated?</strong>
+                </p>
+                <p class="mb-4">
+                    Expected championships are calculated by adding up a team's chances of winning each year they've been in the league. For each season, a team's chance is 1 divided by the total number of teams competing that year.
+                </p>
+                <p class="text-sm">
+                    For example, in a 30-team league, each team has a 1/30 (3.33%) chance of winning the championship that year. If a team has been in the league for 50 years, their expected championships would be 50 × (1/30) = 1.67 championships.
+                </p>
+            </div>
         </div>
 
         <!-- League Tabs -->
