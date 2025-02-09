@@ -39,6 +39,7 @@
     
     <!-- Existing style imports -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Existing styles -->
@@ -332,6 +333,14 @@
                 <p class="text-sm">
                     For example, in a 30-team league, each team has a 1/30 (3.33%) chance of winning the championship that year. If a team has been in the league for 50 years, their expected championships would be 50 × (1/30) = 1.67 championships.
                 </p>
+            <div class="mt-6 text-sm text-gray-500 italic">
+                <p>Coming soon: Enhanced statistics including:</p>
+                <ul class="list-disc list-inside mt-2">
+                    <li>Championship decay factor - weighing recent titles more heavily than ancient history</li>
+                    <li>Overall win-loss record</li>
+                    <li>Franchise ELO Scores</li>
+                </ul>
+            </div>
             </div>
         </div>
 
@@ -1061,9 +1070,22 @@
 
         // Add these new functions
         function showTeamModal(teamData) {
+            // Destroy existing chart if it exists
+            if (currentChart) {
+                currentChart.destroy();
+                currentChart = null;
+            }
+
             const modal = document.getElementById('teamModal');
             const title = document.getElementById('teamModalTitle');
             const content = document.getElementById('teamModalContent');
+            
+            // Get canvas and create new canvas element
+            const chartContainer = document.getElementById('teamChart').parentElement;
+            chartContainer.innerHTML = ''; // Clear existing canvas
+            const canvas = document.createElement('canvas');
+            canvas.id = 'teamChart';
+            chartContainer.appendChild(canvas);
             
             // Determine which league the team is from
             let league = '';
@@ -1127,9 +1149,6 @@
                 </div>
             `;
             
-            // Add chart
-            const ctx = document.getElementById('teamChart').getContext('2d');
-            
             // Destroy existing chart if it exists
             if (currentChart) {
                 currentChart.destroy();
@@ -1143,6 +1162,11 @@
                     const teamStats = statsData[teamData.Team];
                     if (!teamStats) {
                         console.warn(`No historical data found for ${teamData.Team}`);
+                        chartContainer.innerHTML = `
+                            <div class="text-center text-gray-500 py-8">
+                                Historical data not available for ${teamData.Team}
+                            </div>
+                        `;
                         return;
                     }
                     
@@ -1159,7 +1183,7 @@
                         cumulativeWins.push(runningWins);
                     });
                     
-                    currentChart = new Chart(ctx, {
+                    currentChart = new Chart(canvas, {
                         type: 'bar',
                         data: {
                             labels: teamStats.years,
@@ -1234,15 +1258,13 @@
                 })
                 .catch(error => {
                     console.error(`Error loading stats for ${teamData.Team}:`, error);
-                    // Create placeholder message if data loading fails
-                    const chartContainer = document.getElementById('teamChart').parentElement;
                     chartContainer.innerHTML = `
                         <div class="text-center text-gray-500 py-8">
                             Historical data not available for ${teamData.Team}
                         </div>
                     `;
                 });
-            
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
