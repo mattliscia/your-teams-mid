@@ -607,7 +607,7 @@
 
     <!-- Add this new modal template right before the closing </body> tag -->
     <div id="teamModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-8 max-w-2xl mx-4">
+        <div class="bg-white rounded-lg p-8 max-w-4xl mx-4">
             <div class="flex justify-between items-start mb-6">
                 <h2 id="teamModalTitle" class="text-2xl font-bold text-gray-900"></h2>
                 <button class="text-gray-500 hover:text-gray-700 modal-close">
@@ -616,6 +616,9 @@
             </div>
             <div id="teamModalContent" class="prose">
                 <!-- Team data will be inserted here -->
+            </div>
+            <div class="mt-8 h-64"> <!-- Added chart container -->
+                <canvas id="teamChart"></canvas>
             </div>
         </div>
     </div>
@@ -763,6 +766,8 @@
 
 
 
+
+    let currentChart = null; // Add this line at the top of the script
 
     </script>
 
@@ -1121,6 +1126,122 @@
                     </div>
                 </div>
             `;
+            
+            // Add chart
+            const ctx = document.getElementById('teamChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            // Get team stats from the appropriate JSON file based on league
+            const statsFile = `${league.toLowerCase()}_stats.json`;
+            fetch(statsFile)
+                .then(response => response.json())
+                .then(statsData => {
+                    const teamStats = statsData[teamData.Team];
+                    if (!teamStats) {
+                        console.warn(`No historical data found for ${teamData.Team}`);
+                        return;
+                    }
+                    
+                    // Calculate cumulative values
+                    let cumulativeOdds = [];
+                    let cumulativeWins = [];
+                    let runningOdds = 0;
+                    let runningWins = 0;
+                    
+                    teamStats.odds.forEach((odds, index) => {
+                        runningOdds += odds;
+                        runningWins += teamStats.wins[index];
+                        cumulativeOdds.push(runningOdds);
+                        cumulativeWins.push(runningWins);
+                    });
+                    
+                    currentChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: teamStats.years,
+                            datasets: [
+                                {
+                                    type: 'line',
+                                    label: 'Expected Championships',
+                                    data: cumulativeOdds,
+                                    borderColor: 'rgb(75, 192, 192)',
+                                    tension: 0.1,
+                                    yAxisID: 'y'
+                                },
+                                {
+                                    type: 'bar',
+                                    label: 'Actual Championships',
+                                    data: cumulativeWins,
+                                    backgroundColor: 'rgb(153, 102, 255)',
+                                    yAxisID: 'y'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Year'
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 20, // Limit number of year labels to prevent overcrowding
+                                        callback: function(value, index, values) {
+                                            const year = this.getLabelForValue(value);
+                                            // Show every 5th year or first/last year
+                                            if (index === 0 || index === values.length - 1 || year % 5 === 0) {
+                                                return year;
+                                            }
+                                            return '';
+                                        }
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Championships'
+                                    },
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: `${teamData.Team} Championship History`
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.dataset.label || '';
+                                            const value = context.parsed.y.toFixed(2);
+                                            return `${label}: ${value}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error(`Error loading stats for ${teamData.Team}:`, error);
+                    // Create placeholder message if data loading fails
+                    const chartContainer = document.getElementById('teamChart').parentElement;
+                    chartContainer.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            Historical data not available for ${teamData.Team}
+                        </div>
+                    `;
+                });
             
             modal.classList.remove('hidden');
             modal.classList.add('flex');
